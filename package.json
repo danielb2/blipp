@@ -1,7 +1,7 @@
 {
-  "name": "hapi-routes",
+  "name": "hapi-showroutes",
   "version": "0.0.1",
-  "description": "routes is a simple hapi plugin to display the routes table at startup",
+  "description": "showroutes is a simple hapi plugin to display the routes table at startup",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
