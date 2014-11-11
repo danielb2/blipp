@@ -4,6 +4,8 @@ var Hapi = require('hapi');
 var Code = require('code');
 var Lab = require('lab');
 
+var Blipp = require('../');
+
 
 // Test shortcuts
 
@@ -17,7 +19,7 @@ var internals = {};
 
 internals.prepareServer = function (callback) {
 
-    var server = new Hapi.Server();
+    var server = new Hapi.Server('localhost', 8000);
 
     server.route({
         method: 'GET',
@@ -50,19 +52,21 @@ internals.prepareServer = function (callback) {
             reply('');
         }
     });
-    server.pack.register({ plugin: require('../')}, function (err) {
+    server.pack.register({ plugin: Blipp}, function (err) {
 
 
         expect(err).to.not.exist;
         callback(server);
     });
+
+    server.start();
 };
 
 describe('routes', function () {
 
     it('print route information', function (done) {
         internals.prepareServer(function (server) {
-            done();
+            setTimeout(function() { done(); }, 20);
         });
     })
 });
