@@ -1,5 +1,7 @@
 `blipp` is a simple hapi plugin to display the routes table at startup
 
+![image](screenshot.png)
+
 # Usage
 
 ``` javascript
