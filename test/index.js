@@ -40,7 +40,7 @@ internals.prepareServer = function (callback) {
     });
     server.route({
         method: 'POST',
-        path: '/apost/{foo}',
+        path: '/apost/{foo}/comment/{another}',
         handler: function (request, reply) {
             reply('');
         }

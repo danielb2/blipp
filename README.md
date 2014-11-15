@@ -1,4 +1,4 @@
-`blipp` is a simple hapi plugin to display the routes table at startup
+`blipp` is a simple hapi plugin to display the routes table to console at startup
 
 ![image](https://github.com/danielb2/blipp/raw/master/screenshot.png)
 
