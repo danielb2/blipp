@@ -1,7 +1,7 @@
 {
   "name": "blipp",
-  "version": "1.0.0",
-  "description": "blipp is a simple hapi plugin to display the routes table at startup",
+  "version": "1.0.1",
+  "description": "blipp is a simple hapi plugin to display the routes table to console at startup",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
