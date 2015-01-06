@@ -74,7 +74,5 @@ describe('routes', function () {
 
             setTimeout(function() { done(); }, 20);
         });
-    })
+    });
 });
-
-
