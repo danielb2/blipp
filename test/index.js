@@ -19,7 +19,8 @@ var internals = {};
 
 internals.prepareServer = function (callback) {
 
-    var server = new Hapi.Server('localhost', 8000);
+    var server = new Hapi.Server();
+    server.connection();
 
     server.route({
         method: 'GET',
@@ -31,6 +32,7 @@ internals.prepareServer = function (callback) {
             }
         }
     });
+
     server.route({
         method: 'GET',
         path: '/hi',
@@ -38,6 +40,7 @@ internals.prepareServer = function (callback) {
             reply('Hello!');
         }
     });
+
     server.route({
         method: 'POST',
         path: '/apost/{foo}/comment/{another}',
@@ -45,6 +48,7 @@ internals.prepareServer = function (callback) {
             reply('');
         }
     });
+
     server.route({
         method: 'DELETE',
         path: '/post/{id}',
@@ -52,10 +56,10 @@ internals.prepareServer = function (callback) {
             reply('');
         }
     });
-    server.pack.register({ plugin: Blipp}, function (err) {
 
+    server.register(Blipp, function (err) {
 
-        expect(err).to.not.exist;
+        expect(err).to.not.exist();
         callback(server);
     });
 
@@ -65,10 +69,10 @@ internals.prepareServer = function (callback) {
 describe('routes', function () {
 
     it('print route information', function (done) {
+
         internals.prepareServer(function (server) {
+
             setTimeout(function() { done(); }, 20);
         });
-    })
+    });
 });
-
-

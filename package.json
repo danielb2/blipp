@@ -1,20 +1,22 @@
 {
   "name": "blipp",
-  "version": "1.1.0",
-  "description": "blipp is a simple hapi plugin to display the routes table to console at startup",
+  "version": "2.0.0",
+  "description": "blipp is a simple hapi plugin to display the routes table at startup",
   "main": "index.js",
   "scripts": {
     "test": "lab -v"
   },
   "keywords": [
-    "hapi", "plugin", "hapi-plugin"
+    "hapi",
+    "plugin",
+    "hapi-plugin"
   ],
   "author": "Daniel Bretoi",
   "license": "BSD",
   "dependencies": {
     "chalk": "0.5.x",
-    "code": "1.2.x",
-    "hapi": "7.3.x",
-    "lab": "5.0.x"
+    "code": "1.x.x",
+    "hapi": "8.x.x",
+    "lab": "5.x.x"
   }
 }

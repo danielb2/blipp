@@ -5,9 +5,11 @@
 # Usage
 
 ``` javascript
-    var Hapi = require('hapi');
-    var server = new Hapi.Server(8086);
     var Blipp = require('blipp');
+    var Hapi = require('hapi');
+
+    var server = new Hapi.Server();
+    server.connection();
 
     server.route({
         method: 'GET',
@@ -17,7 +19,7 @@
         }
     });
 
-    server.pack.register({ plugin: Blipp }, function(err) {
+    server.register(Blipp, function(err) {
         server.start(function () {
             // ..
         });
