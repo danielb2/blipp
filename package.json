@@ -1,10 +1,14 @@
 {
   "name": "blipp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "blipp is a simple hapi plugin to display the routes table at startup",
   "main": "index.js",
   "scripts": {
     "test": "lab -v"
+  },
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/danielb2/blipp"
   },
   "keywords": [
     "hapi",
