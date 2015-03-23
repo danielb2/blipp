@@ -20,7 +20,42 @@ var internals = {};
 internals.prepareServer = function (callback) {
 
     var server = new Hapi.Server();
-    server.connection();
+    server.connection({ labels: ['first'] });
+    server.connection({ labels: ['second'] });
+
+    var second = server.select('second');
+
+    var plug = {
+        register: function (plugin, options, next) {
+
+            plugin.route({
+                method: 'GET',
+                path: '/pluginroute',
+                config: {
+                    description: 'a route from plugin',
+                    handler: function (request, reply) {
+                        reply('index!');
+                    }
+                }
+            });
+            return next();
+        }
+    };
+    plug.register.attributes = {
+        name: 'a plugin',
+        version: '0.1.1'
+    };
+
+    server.route({
+        method: 'GET',
+        path: '/second',
+        config: {
+            description: 'a route on second connection',
+            handler: function (request, reply) {
+                reply('index!');
+            }
+        }
+    });
 
     server.route({
         method: 'GET',
@@ -57,7 +92,7 @@ internals.prepareServer = function (callback) {
         }
     });
 
-    server.register(Blipp, function (err) {
+    server.register([Blipp, plug], function (err) {
 
         expect(err).to.not.exist();
         callback(server);
