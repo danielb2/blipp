@@ -34,6 +34,7 @@ internals.prepareServer = function (callback) {
                 config: {
                     description: 'a route from plugin',
                     handler: function (request, reply) {
+
                         reply('index!');
                     }
                 }
@@ -41,6 +42,7 @@ internals.prepareServer = function (callback) {
             return next();
         }
     };
+
     plug.register.attributes = {
         name: 'a plugin',
         version: '0.1.1'
@@ -52,6 +54,7 @@ internals.prepareServer = function (callback) {
         config: {
             description: 'a route on second connection',
             handler: function (request, reply) {
+
                 reply('index!');
             }
         }
@@ -63,6 +66,7 @@ internals.prepareServer = function (callback) {
         config: {
             description: 'a route description',
             handler: function (request, reply) {
+
                 reply('index!');
             }
         }
@@ -72,6 +76,7 @@ internals.prepareServer = function (callback) {
         method: 'GET',
         path: '/hi',
         handler: function (request, reply) {
+
             reply('Hello!');
         }
     });
@@ -80,6 +85,7 @@ internals.prepareServer = function (callback) {
         method: 'POST',
         path: '/apost/{foo}/comment/{another}',
         handler: function (request, reply) {
+
             reply('');
         }
     });
@@ -88,6 +94,7 @@ internals.prepareServer = function (callback) {
         method: 'DELETE',
         path: '/post/{id}',
         handler: function (request, reply) {
+
             reply('');
         }
     });
