@@ -23,16 +23,14 @@ internals.prepareServer = function (callback) {
     server.connection({ labels: ['first'] });
     server.connection({ labels: ['second'] });
 
-    var second = server.select('second');
-
-    var plug = {
+    var api = {
         register: function (plugin, options, next) {
 
             plugin.route({
                 method: 'GET',
-                path: '/pluginroute',
+                path: '/api',
                 config: {
-                    description: 'a route from plugin',
+                    description: 'api routes',
                     handler: function (request, reply) {
 
                         reply('index!');
@@ -43,16 +41,68 @@ internals.prepareServer = function (callback) {
         }
     };
 
-    plug.register.attributes = {
-        name: 'a plugin',
+    api.register.attributes = {
+        name: 'an api plugin',
+        version: '0.1.1'
+    };
+
+    var main = {
+        register: function (plugin, options, next) {
+
+            plugin.route({
+                method: 'GET',
+                path: '/',
+                config: {
+                    description: 'main index',
+                    handler: function (request, reply) {
+
+                        reply('index!');
+                    }
+                }
+            });
+
+            plugin.route({
+                method: 'GET',
+                path: '/hi',
+                handler: function (request, reply) {
+
+                    reply('Hello!');
+                }
+            });
+
+            plugin.route({
+                method: 'POST',
+                path: '/apost/{foo}/comment/{another}',
+                handler: function (request, reply) {
+
+                    reply('');
+                }
+            });
+
+            plugin.route({
+                method: 'DELETE',
+                path: '/post/{id}',
+                handler: function (request, reply) {
+
+                    reply('');
+                }
+            });
+
+
+            return next();
+        }
+    };
+
+    main.register.attributes = {
+        name: 'main',
         version: '0.1.1'
     };
 
     server.route({
         method: 'GET',
-        path: '/second',
+        path: '/all',
         config: {
-            description: 'a route on second connection',
+            description: 'a route on all connections',
             handler: function (request, reply) {
 
                 reply('index!');
@@ -60,49 +110,16 @@ internals.prepareServer = function (callback) {
         }
     });
 
-    server.route({
-        method: 'GET',
-        path: '/',
-        config: {
-            description: 'a route description',
-            handler: function (request, reply) {
+    server.register([Blipp], function (err) {
 
-                reply('index!');
-            }
-        }
-    });
+        server.register([main], { select: 'first' },  function (err) {
 
-    server.route({
-        method: 'GET',
-        path: '/hi',
-        handler: function (request, reply) {
+            server.register([api], { select: 'second' }, function (err) {
 
-            reply('Hello!');
-        }
-    });
-
-    server.route({
-        method: 'POST',
-        path: '/apost/{foo}/comment/{another}',
-        handler: function (request, reply) {
-
-            reply('');
-        }
-    });
-
-    server.route({
-        method: 'DELETE',
-        path: '/post/{id}',
-        handler: function (request, reply) {
-
-            reply('');
-        }
-    });
-
-    server.register([Blipp, plug], function (err) {
-
-        expect(err).to.not.exist();
-        callback(server);
+                expect(err).to.not.exist();
+                callback(server);
+            });
+        });
     });
 
     server.start();
