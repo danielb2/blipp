@@ -112,7 +112,7 @@ internals.prepareServer = function (callback) {
 
     server.register([Blipp], function (err) {
 
-        server.register([main], { select: 'first' },  function (err) {
+        server.register([main], { select: 'first' }, function (err) {
 
             server.register([api], { select: 'second' }, function (err) {
 
