@@ -22,6 +22,7 @@ internals.prepareServer = function (callback) {
     var server = new Hapi.Server();
     server.connection({ labels: ['first'] });
     server.connection({ labels: ['second'] });
+    server.connection();
 
     var api = {
         register: function (plugin, options, next) {
