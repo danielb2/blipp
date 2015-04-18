@@ -19,8 +19,10 @@
   "license": "BSD",
   "dependencies": {
     "chalk": "0.5.x",
+    "hapi": "8.x.x"
+  },
+  "devDependencies": {
     "code": "1.x.x",
-    "hapi": "8.x.x",
     "lab": "5.x.x"
   }
 }
