@@ -3,7 +3,7 @@ startup. It organizes the display per connection so if you have multiple
 connections you can easily ensure that you've done your routing table
 correctly. This can be difficult to see otherwise.
 
-![image](https://github.com/danielb2/blipp/raw/master/screenshot.png)
+![image](screenshot.png)
 
 # Usage
 
