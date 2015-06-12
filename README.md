@@ -17,8 +17,12 @@ correctly. This can be difficult to see otherwise.
     server.route({
         method: 'GET',
         path: '/somepath',
-        handler: function (request, reply) {
+        config: {
+            auth: 'simple',
+            description: 'Description to display',
+            handler: function (request, reply) {
             // ..
+            }
         }
     });
 
