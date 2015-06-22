@@ -17,12 +17,21 @@ var it = lab.test;
 
 var internals = {};
 
-internals.prepareServer = function (callback) {
+internals.prepareServer = function (withAuth, callback) {
 
     var server = new Hapi.Server();
     server.connection({ labels: ['first'] });
     server.connection({ labels: ['second'] });
     server.connection();
+    server.register(require('hapi-auth-basic'), function (err) {
+
+        server.auth.strategy('simple', 'basic', {
+            validateFunc: function (username, password, callback) {
+
+                callback(err, true, {});
+            }
+        });
+    });
 
     var api = {
         register: function (plugin, options, next) {
@@ -54,6 +63,7 @@ internals.prepareServer = function (callback) {
                 method: 'GET',
                 path: '/',
                 config: {
+                    auth: false,
                     description: 'main index',
                     handler: function (request, reply) {
 
@@ -65,9 +75,12 @@ internals.prepareServer = function (callback) {
             plugin.route({
                 method: 'GET',
                 path: '/hi',
-                handler: function (request, reply) {
+                config: {
+                    auth: 'simple',
+                    handler: function (request, reply) {
 
-                    reply('Hello!');
+                        reply('Hello!');
+                    }
                 }
             });
 
@@ -111,7 +124,7 @@ internals.prepareServer = function (callback) {
         }
     });
 
-    server.register([Blipp], function (err) {
+    server.register([ { register: Blipp, options: { showAuth: withAuth } } ], function (err) {
 
         server.register([main], { select: 'first' }, function (err) {
 
@@ -130,9 +143,17 @@ describe('routes', function () {
 
     it('print route information', function (done) {
 
-        internals.prepareServer(function (server) {
+        internals.prepareServer(false, function (server) {
 
-            setTimeout(function() { done(); }, 20);
+            setTimeout(done, 20);
+        });
+    });
+
+    it('print route information with auth', function (done) {
+
+        internals.prepareServer(true, function (server) {
+
+            setTimeout(done, 20);
         });
     });
 });
