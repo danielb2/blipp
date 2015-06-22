@@ -3,7 +3,7 @@ startup. It organizes the display per connection so if you have multiple
 connections you can easily ensure that you've done your routing table
 correctly. This can be difficult to see otherwise.
 
-![image](screenshot.png)
+![image](images/screenshot.png)
 
 # Usage
 
@@ -32,6 +32,24 @@ correctly. This can be difficult to see otherwise.
         });
     });
 ```
+
+# Usage with authentication information
+
+``` javascript
+    server.register(
+        {
+            register: require('blipp'),
+            options: {
+                showAuth: true
+            }
+        }, function(err) {
+        server.start(function () {
+            // ..
+        });
+    });
+```
+
+![image](images/screenshot-with-auth.png)
 
 # Versions
 
