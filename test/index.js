@@ -124,7 +124,7 @@ internals.prepareServer = function (callback) {
         }
     });
 
-    server.register([{register: Blipp, options: {showAuth: true}}], function (err) {
+    server.register([ { register: Blipp, options: { showAuth: true } } ], function (err) {
 
         server.register([main], { select: 'first' }, function (err) {
 
