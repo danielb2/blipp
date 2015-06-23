@@ -17,7 +17,7 @@ var it = lab.test;
 
 var internals = {};
 
-internals.prepareServer = function (withAuth, callback) {
+internals.prepareServer = function (options, callback) {
 
     var server = new Hapi.Server();
     server.connection({ labels: ['first'] });
@@ -124,7 +124,7 @@ internals.prepareServer = function (withAuth, callback) {
         }
     });
 
-    server.register([ { register: Blipp, options: { showAuth: withAuth } } ], function (err) {
+    server.register([ { register: Blipp, options: options } ], function (err) {
 
         server.register([main], { select: 'first' }, function (err) {
 
@@ -151,9 +151,21 @@ describe('routes', function () {
 
     it('print route information with auth', function (done) {
 
-        internals.prepareServer(true, function (server) {
+        internals.prepareServer({ showAuth: true }, function (server) {
 
             setTimeout(done, 20);
         });
+    });
+
+    it('fails with invalid options', function (done) {
+
+        var invalidOptions = function () {
+
+            internals.prepareServer({ derp: true }, function (server) {
+
+            });
+        };
+        expect(invalidOptions).to.throw();
+        done();
     });
 });
