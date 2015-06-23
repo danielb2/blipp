@@ -37,10 +37,11 @@ server.register({ register: Blipp, options: {} }, function (err) {
 
 The following options are available:
 
-* `showAuth`: Shows any authentication scheme. Default: false
+* `showAuth`: Shows any hapi authentication scheme using server.auth.strategy. Default: false
 
 
-showAuth screenshot:
+With showAuth:
+
 ![image](images/screenshot-with-auth.png)
 
 # Versions
