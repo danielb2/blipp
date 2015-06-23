@@ -26,29 +26,21 @@ server.route({
     }
 });
 
-server.register(Blipp, function(err) {
+server.register({ register: Blipp, options: {} }, function (err) {
     server.start(function () {
         // ..
     });
 });
 ```
 
-# Usage with authentication information
+# Options
 
-``` javascript
-server.register(
-    {
-        register: require('blipp'),
-        options: {
-            showAuth: true
-        }
-    }, function(err) {
-    server.start(function () {
-        // ..
-    });
-});
-```
+The following options are available:
 
+* `showAuth`: Shows any authentication scheme. Default: false
+
+
+showAuth screenshot:
 ![image](images/screenshot-with-auth.png)
 
 # Versions

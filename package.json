@@ -18,7 +18,9 @@
   "author": "Daniel Bretoi",
   "license": "BSD",
   "dependencies": {
-    "chalk": "0.5.x"
+    "chalk": "0.5.x",
+    "hoek": "2.x.x",
+    "joi": "6.x.x"
   },
   "devDependencies": {
     "code": "1.x.x",
