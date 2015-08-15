@@ -131,7 +131,7 @@ internals.prepareServer = function (options, callback) {
         }
     });
 
-    server.register([ { register: Blipp, options: options.blippOptions } ], function (err) {
+    server.register([{ register: Blipp, options: options.blippOptions }], function (err) {
 
         server.register([main], { select: 'first' }, function (err) {
 
@@ -176,7 +176,7 @@ describe('routes', function () {
 
         var invalidOptions = function () {
 
-            internals.prepareServer({ blippOptions: { derp: true }}, function (server) {
+            internals.prepareServer({ blippOptions: { derp: true } }, function (server) {
 
             });
         };
