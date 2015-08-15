@@ -45,7 +45,7 @@ The module also registers the _'info()'_  and _'text()'_ API methods:
 ```javascript
 console.log(server.plugins.blipp.info();
 console.log(server.plugins.blipp.text();
-var json = JSON.stringify(server.plugins.blipp.json());
+var json = JSON.stringify(server.plugins.blipp.info());
 ```
 
 
