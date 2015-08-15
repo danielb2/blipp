@@ -250,8 +250,8 @@ describe('routes', function () {
 
         internals.prepareServer({ blippOptions: { showAuth: false, showStart: false } }, function (server) {
 
-            var json = server.plugins[Pkg.name].json();
-            expect(json).to.deep.equal(internals.result);
+            var info = server.plugins[Pkg.name].info();
+            expect(info).to.deep.equal(internals.result);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.not.match(/none.*main index/);
             done();
@@ -262,8 +262,8 @@ describe('routes', function () {
 
         internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'findme' }, function (server) {
 
-            var json = server.plugins[Pkg.name].json();
-            expect(json).to.deep.equal(internals.authResult);
+            var info = server.plugins[Pkg.name].info();
+            expect(info).to.deep.equal(internals.authResult);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.match(/none.*main index/);
             expect(text).to.match(/none.*api routes/);
@@ -276,8 +276,8 @@ describe('routes', function () {
 
         internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'default' }, function (server) {
 
-            var json = server.plugins[Pkg.name].json();
-            expect(json).to.deep.equal(internals.defaultAuthResult);
+            var info = server.plugins[Pkg.name].info();
+            expect(info).to.deep.equal(internals.defaultAuthResult);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.match(/none.*main index/);
             expect(text).to.match(/findme.*api routes/);

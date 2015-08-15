@@ -41,10 +41,11 @@ The following options are available:
 * `showStart`: Shows route information during startup of server. Default: true
 
 
-The module also registers the _'json()'_  and 'text()' API methods:
+The module also registers the _'info()'_  and 'text()' API methods:
 ```javascript
-console.log(server.plugins.blipp.json();
+console.log(server.plugins.blipp.info();
 console.log(server.plugins.blipp.text();
+var json = JSON.stringify(server.plugins.blipp.json());
 ```
 
 
