@@ -226,41 +226,61 @@ describe('routes', function () {
 
     it('print route information', function (done) {
 
+        var saved = console.log;
+        var out = '';
+        console.log = function (str) {
+
+            out += str;
+        };
+
         internals.prepareServer(false, function (server) {
 
-            var result = server.plugins[Pkg.name].json();
-            expect(result).to.deep.equal(internals.result);
-            setTimeout(done, 20);
+            setTimeout(function () {
+
+                console.log = saved;
+                expect(out).to.not.match(/none.*main index/);
+                expect(out).to.match(/DELETE.*post/);
+                done();
+            }, 20);
         });
     });
 
 
     it('gets route information', function (done) {
 
-        internals.prepareServer(false, function (server) {
+        internals.prepareServer({ blippOptions: { showAuth: false, showStart: false } }, function (server) {
 
-            var result = server.plugins[Pkg.name].json();
-            expect(result).to.deep.equal(internals.result);
+            var json = server.plugins[Pkg.name].json();
+            expect(json).to.deep.equal(internals.result);
+            var text = server.plugins[Pkg.name].text();
+            expect(text).to.not.match(/none.*main index/);
             done();
         });
     });
 
     it('gets route information with auth', function (done) {
 
-        internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'findme' }, function (server) {
+        internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'findme' }, function (server) {
 
-            var result = server.plugins[Pkg.name].json();
-            expect(result).to.deep.equal(internals.authResult);
+            var json = server.plugins[Pkg.name].json();
+            expect(json).to.deep.equal(internals.authResult);
+            var text = server.plugins[Pkg.name].text();
+            expect(text).to.match(/none.*main index/);
+            expect(text).to.match(/none.*api routes/);
+            expect(text).to.match(/hi.*findme/);
             done();
         });
     });
 
     it('gets route information with default', function (done) {
 
-        internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'default' }, function (server) {
+        internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'default' }, function (server) {
 
-            var result = server.plugins[Pkg.name].json();
-            expect(result).to.deep.equal(internals.defaultAuthResult);
+            var json = server.plugins[Pkg.name].json();
+            expect(json).to.deep.equal(internals.defaultAuthResult);
+            var text = server.plugins[Pkg.name].text();
+            expect(text).to.match(/none.*main index/);
+            expect(text).to.match(/findme.*api routes/);
             done();
         });
     });
