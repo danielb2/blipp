@@ -38,6 +38,14 @@ server.register({ register: Blipp, options: {} }, function (err) {
 The following options are available:
 
 * `showAuth`: Shows any hapi authentication scheme using server.auth.strategy. Default: false
+* `showStart`: Shows route information during startup of server. Default: true
+
+
+The module also registers the _'json()'_  and 'text()' API methods:
+```javascript
+console.log(server.plugins.blipp.json();
+console.log(server.plugins.blipp.text();
+```
 
 
 With showAuth:
