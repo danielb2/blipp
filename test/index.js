@@ -15,7 +15,12 @@ var describe = lab.describe;
 var it = lab.test;
 
 
-var internals = {};
+var internals = {
+    validateFunc: function (username, password, callback) {
+
+        callback(err, true, {});
+    }
+};
 
 internals.prepareServer = function (options, callback) {
 
@@ -25,16 +30,18 @@ internals.prepareServer = function (options, callback) {
     server.connection();
     server.register(require('hapi-auth-basic'), function (err) {
 
-        server.auth.strategy('simple', 'basic', {
-            validateFunc: function (username, password, callback) {
 
-                callback(err, true, {});
-            }
-        });
+        if (options.authType === 'findme') {
+            server.auth.strategy('findme', 'basic', { validateFunc: internals.validateFunc });
+        }
+
+        if (options.authType === 'default') {
+            server.auth.strategy('findme', 'basic', { validateFunc: internals.validateFunc });
+            server.auth.default('findme');
+        }
     });
-
     var api = {
-        register: function (plugin, options, next) {
+        register: function (plugin, pluginOptions, next) {
 
             plugin.route({
                 method: 'GET',
@@ -57,7 +64,7 @@ internals.prepareServer = function (options, callback) {
     };
 
     var main = {
-        register: function (plugin, options, next) {
+        register: function (plugin, pluginOptions, next) {
 
             plugin.route({
                 method: 'GET',
@@ -76,7 +83,7 @@ internals.prepareServer = function (options, callback) {
                 method: 'GET',
                 path: '/hi',
                 config: {
-                    auth: 'simple',
+                    auth: options.authType ? 'findme' : null,
                     handler: function (request, reply) {
 
                         reply('Hello!');
@@ -124,7 +131,7 @@ internals.prepareServer = function (options, callback) {
         }
     });
 
-    server.register([ { register: Blipp, options: options } ], function (err) {
+    server.register([ { register: Blipp, options: options.blippOptions } ], function (err) {
 
         server.register([main], { select: 'first' }, function (err) {
 
@@ -151,7 +158,15 @@ describe('routes', function () {
 
     it('print route information with auth', function (done) {
 
-        internals.prepareServer({ showAuth: true }, function (server) {
+        internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'findme' }, function (server) {
+
+            setTimeout(done, 20);
+        });
+    });
+
+    it('print route information with default', function (done) {
+
+        internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'default' }, function (server) {
 
             setTimeout(done, 20);
         });
@@ -161,7 +176,7 @@ describe('routes', function () {
 
         var invalidOptions = function () {
 
-            internals.prepareServer({ derp: true }, function (server) {
+            internals.prepareServer({ blippOptions: { derp: true }}, function (server) {
 
             });
         };
