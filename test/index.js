@@ -5,6 +5,7 @@ var Code = require('code');
 var Lab = require('lab');
 
 var Blipp = require('../');
+var Pkg = require('../package.json');
 
 
 // Test shortcuts
@@ -19,7 +20,82 @@ var internals = {
     validateFunc: function (username, password, callback) {
 
         callback(err, true, {});
-    }
+    },
+    result: [{
+        uri: 'http://nero.local',
+        labels: ['first'],
+        routes: [
+            { method: 'GET', path: '/', description: 'main index' },
+            { method: 'GET', path: '/all', description: 'a route on all connections' },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '' },
+            { method: 'GET', path: '/hi', description: '' },
+            { method: 'DELETE', path: '/post/{id}', description: '' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: ['second'],
+        routes: [
+            { method: 'GET', path: '/all', description: 'a route on all connections' },
+            { method: 'GET', path: '/api', description: 'api routes' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: [],
+        routes: [{
+            method: 'GET',
+            path: '/all',
+            description: 'a route on all connections'
+        }]
+    }],
+    authResult: [{
+        uri: 'http://nero.local',
+        labels: ['first'],
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: ['second'],
+        routes: [
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: [],
+        routes: [
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false }
+        ]
+    }],
+    defaultAuthResult: [{
+        uri: 'http://nero.local',
+        labels: ['first'],
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: 'findme' },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: 'findme' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: ['second'],
+        routes: [
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' },
+            { method: 'GET', path: '/api', description: 'api routes', auth: 'findme' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: [],
+        routes: [
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' }
+        ]
+    }]
+
 };
 
 internals.prepareServer = function (options, callback) {
@@ -152,23 +228,40 @@ describe('routes', function () {
 
         internals.prepareServer(false, function (server) {
 
+            var result = server.plugins[Pkg.name].json();
+            expect(result).to.deep.equal(internals.result);
             setTimeout(done, 20);
         });
     });
 
-    it('print route information with auth', function (done) {
+
+    it('gets route information', function (done) {
+
+        internals.prepareServer(false, function (server) {
+
+            var result = server.plugins[Pkg.name].json();
+            expect(result).to.deep.equal(internals.result);
+            done();
+        });
+    });
+
+    it('gets route information with auth', function (done) {
 
         internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'findme' }, function (server) {
 
-            setTimeout(done, 20);
+            var result = server.plugins[Pkg.name].json();
+            expect(result).to.deep.equal(internals.authResult);
+            done();
         });
     });
 
-    it('print route information with default', function (done) {
+    it('gets route information with default', function (done) {
 
         internals.prepareServer({ blippOptions: { showAuth: true }, authType: 'default' }, function (server) {
 
-            setTimeout(done, 20);
+            var result = server.plugins[Pkg.name].json();
+            expect(result).to.deep.equal(internals.defaultAuthResult);
+            done();
         });
     });
 
