@@ -222,6 +222,16 @@ internals.prepareServer = function (options, callback) {
     server.start();
 };
 
+
+internals.fixUri = function (server, connections) {
+
+    for (var i = 0, il = connections.length; i < il; ++i) {
+        var connection = connections[i];
+        connection.uri = server.info.uri;
+    }
+};
+
+
 describe('routes', function () {
 
     it('print route information', function (done) {
@@ -251,6 +261,7 @@ describe('routes', function () {
         internals.prepareServer({ blippOptions: { showAuth: false, showStart: false } }, function (server) {
 
             var info = server.plugins[Pkg.name].info();
+            internals.fixUri(server, internals.result);
             expect(info).to.deep.equal(internals.result);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.not.match(/none.*main index/);
@@ -263,6 +274,7 @@ describe('routes', function () {
         internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'findme' }, function (server) {
 
             var info = server.plugins[Pkg.name].info();
+            internals.fixUri(server, internals.authResult);
             expect(info).to.deep.equal(internals.authResult);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.match(/none.*main index/);
@@ -277,6 +289,7 @@ describe('routes', function () {
         internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'default' }, function (server) {
 
             var info = server.plugins[Pkg.name].info();
+            internals.fixUri(server, internals.defaultAuthResult);
             expect(info).to.deep.equal(internals.defaultAuthResult);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.match(/none.*main index/);
