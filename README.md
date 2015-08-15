@@ -1,3 +1,5 @@
+# blipp ![build](https://travis-ci.org/danielb2/blipp.svg?branch=master)
+
 `blipp` is a simple hapi plugin to display the routes table to console at
 startup. It organizes the display per connection so if you have multiple
 connections you can easily ensure that you've done your routing table
@@ -5,7 +7,7 @@ correctly. This can be difficult to see otherwise.
 
 ![image](images/screenshot.png)
 
-# Usage
+## Usage
 
 ``` javascript
 var Blipp = require('blipp');
@@ -33,7 +35,7 @@ server.register({ register: Blipp, options: {} }, function (err) {
 });
 ```
 
-# Options
+## Options
 
 The following options are available:
 
@@ -53,7 +55,7 @@ With showAuth:
 
 ![image](images/screenshot-with-auth.png)
 
-# Versions
+## Versions
 
 * 1.x = hapi 7.x
 * 2.x = hapi 8.x
