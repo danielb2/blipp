@@ -104,6 +104,7 @@ internals.prepareServer = function (options, callback) {
     server.connection({ labels: ['first'] });
     server.connection({ labels: ['second'] });
     server.connection();
+
     server.register(require('hapi-auth-basic'), function (err) {
 
 
@@ -116,6 +117,7 @@ internals.prepareServer = function (options, callback) {
             server.auth.default('findme');
         }
     });
+
     var api = {
         register: function (plugin, pluginOptions, next) {
 
@@ -126,7 +128,7 @@ internals.prepareServer = function (options, callback) {
                     description: 'api routes',
                     handler: function (request, reply) {
 
-                        reply('index!');
+                        return reply('index!');
                     }
                 }
             });
@@ -150,7 +152,7 @@ internals.prepareServer = function (options, callback) {
                     description: 'main index',
                     handler: function (request, reply) {
 
-                        reply('index!');
+                        return reply('index!');
                     }
                 }
             });
@@ -162,7 +164,7 @@ internals.prepareServer = function (options, callback) {
                     auth: options.authType ? 'findme' : null,
                     handler: function (request, reply) {
 
-                        reply('Hello!');
+                        return reply('Hello!');
                     }
                 }
             });
@@ -172,7 +174,7 @@ internals.prepareServer = function (options, callback) {
                 path: '/apost/{foo}/comment/{another}',
                 handler: function (request, reply) {
 
-                    reply('');
+                    return reply('');
                 }
             });
 
@@ -181,7 +183,7 @@ internals.prepareServer = function (options, callback) {
                 path: '/post/{id}',
                 handler: function (request, reply) {
 
-                    reply('');
+                    return reply('');
                 }
             });
 
@@ -202,7 +204,7 @@ internals.prepareServer = function (options, callback) {
             description: 'a route on all connections',
             handler: function (request, reply) {
 
-                reply('index!');
+                return reply('index!');
             }
         }
     });
@@ -214,7 +216,7 @@ internals.prepareServer = function (options, callback) {
             server.register([api], { select: 'second' }, function (err) {
 
                 expect(err).to.not.exist();
-                callback(server);
+                return callback(server);
             });
         });
     });
