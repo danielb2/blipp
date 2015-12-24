@@ -47,6 +47,26 @@ var internals = {
             description: 'a route on all connections'
         }]
     }],
+    excludeResult: [{
+        uri: 'http://nero.local',
+        labels: ['first'],
+        routes: [
+            { method: 'GET', path: '/', description: 'main index' },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '' },
+            { method: 'GET', path: '/hi', description: '' },
+            { method: 'DELETE', path: '/post/{id}', description: '' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: ['second'],
+        routes: [
+            { method: 'GET', path: '/api', description: 'api routes' }
+        ]
+    }, {
+        uri: 'http://nero.local',
+        labels: [],
+        routes: []
+    }],
     authResult: [{
         uri: 'http://nero.local',
         labels: ['first'],
@@ -154,6 +174,18 @@ internals.prepareServer = function (options, callback) {
 
                         return reply('index!');
                     }
+                }
+            });
+
+            plugin.route({
+                method: 'GET',
+                path: '/excluded',
+                config: {
+                    handler: function (request, reply) {
+
+                        return reply('will not show');
+                    },
+                    plugins: { blipp: { exclude: true } }
                 }
             });
 
@@ -267,6 +299,28 @@ describe('routes', function () {
             expect(info).to.deep.equal(internals.result);
             var text = server.plugins[Pkg.name].text();
             expect(text).to.not.match(/none.*main index/);
+            done();
+        });
+    });
+
+    it('hides routes we dont want', function (done) {
+
+        internals.prepareServer({ blippOptions: { exclude: '/all', showStart: false } }, function (server) {
+
+            var info = server.plugins[Pkg.name].info();
+            internals.fixUri(server, internals.excludeResult);
+            expect(info).to.deep.equal(internals.excludeResult);
+            done();
+        });
+    });
+
+    it('hides routes we dont want with array', function (done) {
+
+        internals.prepareServer({ blippOptions: { exclude: ['/all'], showStart: false } }, function (server) {
+
+            var info = server.plugins[Pkg.name].info();
+            internals.fixUri(server, internals.excludeResult);
+            expect(info).to.deep.equal(internals.excludeResult);
             done();
         });
     });

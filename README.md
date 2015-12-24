@@ -41,7 +41,24 @@ The following options are available:
 
 * `showAuth`: Shows any hapi authentication scheme using server.auth.strategy. Default: false
 * `showStart`: Shows route information during startup of server. Default: true
+* `exclude`: String or array of exact endpoints to omit in listing. Also
+  available as a route specific option.
 
+``` javascript
+plugin.route({
+    method: 'GET',
+    path: '/excluded',
+    config: {
+        handler: function (request, reply) {
+
+            return reply('will not show');
+        },
+        plugins: { blipp: { exclude: true } } // <- route will not be displayed
+    }
+});
+```
+
+## API methods
 
 The module also registers the _'info()'_  and _'text()'_ API methods:
 ```javascript
