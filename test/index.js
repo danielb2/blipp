@@ -1,158 +1,108 @@
+'use strict';
+
 // Load modules
 
-var Hapi = require('hapi');
-var Code = require('code');
-var Lab = require('lab');
+const Hapi = require('hapi');
+const Code = require('code');
+const Lab = require('lab');
 
-var Blipp = require('../');
-var Pkg = require('../package.json');
-
+const Blipp = require('../lib/');
+const Pkg = require('../package.json');
 
 // Test shortcuts
+const { expect, it, describe } = exports.lab = require('lab').script();
 
-var lab = exports.lab = Lab.script();
-var expect = Code.expect;
-var describe = lab.describe;
-var it = lab.test;
-
-
+// only one connection; results are in alphabetical order
 var internals = {
-    validateFunc: function (username, password, callback) {
+    validateFunc: async function (request, username, password, h) {
 
-        callback(err, true, {});
+        return {isValid: true, credentials: null};
     },
     result: [{
-        uri: 'http://nero.local',
-        labels: ['first'],
         routes: [
             { method: 'GET', path: '/', description: 'main index' },
             { method: 'GET', path: '/all', description: 'a route on all connections' },
+            { method: 'GET', path: '/api', description: 'api routes' },
             { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '' },
             { method: 'GET', path: '/hi', description: '' },
             { method: 'DELETE', path: '/post/{id}', description: '' }
         ]
-    }, {
-        uri: 'http://nero.local',
-        labels: ['second'],
-        routes: [
-            { method: 'GET', path: '/all', description: 'a route on all connections' },
-            { method: 'GET', path: '/api', description: 'api routes' }
-        ]
-    }, {
-        uri: 'http://nero.local',
-        labels: [],
-        routes: [{
-            method: 'GET',
-            path: '/all',
-            description: 'a route on all connections'
-        }]
     }],
     authResult: [{
-        uri: 'http://nero.local',
-        labels: ['first'],
-        routes: [
-            { method: 'GET', path: '/', description: 'main index', auth: false },
-            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false },
-            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false },
-            { method: 'GET', path: '/hi', description: '', auth: 'findme' },
-            { method: 'DELETE', path: '/post/{id}', description: '', auth: false }
-        ]
-    }, {
-        uri: 'http://nero.local',
-        labels: ['second'],
-        routes: [
-            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false },
-            { method: 'GET', path: '/api', description: 'api routes', auth: false }
-        ]
-    }, {
-        uri: 'http://nero.local',
-        labels: [],
-        routes: [
-            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false }
-        ]
-    }],
-    defaultAuthResult: [{
-        uri: 'http://nero.local',
-        labels: ['first'],
         routes: [
             { method: 'GET', path: '/', description: 'main index', auth: false },
             { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' },
+            { method: 'GET', path: '/api', description: 'api routes', auth: 'findme' },
             { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: 'findme' },
             { method: 'GET', path: '/hi', description: '', auth: 'findme' },
             { method: 'DELETE', path: '/post/{id}', description: '', auth: 'findme' }
         ]
-    }, {
-        uri: 'http://nero.local',
-        labels: ['second'],
+    }],
+    defaultAuthResult: [{
         routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false },
             { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' },
-            { method: 'GET', path: '/api', description: 'api routes', auth: 'findme' }
-        ]
-    }, {
-        uri: 'http://nero.local',
-        labels: [],
-        routes: [
-            { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' }
+            { method: 'GET', path: '/api', description: 'api routes', auth: 'findme' },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: 'findme' },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: 'findme' }
         ]
     }]
 
 };
 
-internals.prepareServer = function (options, callback) {
+internals.prepareServer = async function (options) {
 
     var server = new Hapi.Server();
-    server.connection({ labels: ['first'] });
-    server.connection({ labels: ['second'] });
-    server.connection();
 
-    server.register(require('hapi-auth-basic'), function (err) {
-
-
+    try {
+        await server.register(require('hapi-auth-basic'));
+        
         if (options.authType === 'findme') {
-            server.auth.strategy('findme', 'basic', { validateFunc: internals.validateFunc });
+            server.auth.strategy('findme', 'basic', { validate: internals.validateFunc });
         }
 
         if (options.authType === 'default') {
-            server.auth.strategy('findme', 'basic', { validateFunc: internals.validateFunc });
+            server.auth.strategy('findme', 'basic', { validate: internals.validateFunc });
             server.auth.default('findme');
         }
-    });
+        
+    } catch(err) {
+        console.log('Error: Couldn\'t register hapi-auth-basic', err);
+    }
 
     var api = {
-        register: function (plugin, pluginOptions, next) {
-
+        register: function (plugin, pluginOptions) {
             plugin.route({
                 method: 'GET',
                 path: '/api',
-                config: {
+                options: {
                     description: 'api routes',
-                    handler: function (request, reply) {
+                    auth: options.authType ? 'findme' : null,
+                    handler: function (request, h) {
 
-                        return reply('index!');
+                        return 'index!';
                     }
                 }
             });
-            return next();
         }
     };
 
-    api.register.attributes = {
-        name: 'an api plugin',
-        version: '0.1.1'
-    };
+    api.name = 'an api plugin';
+    api.version = '1.0.0';
 
     var main = {
-        register: function (plugin, pluginOptions, next) {
+        register: function (plugin, pluginOptions) {
 
             plugin.route({
                 method: 'GET',
                 path: '/',
-                config: {
+                options: {
                     auth: false,
                     description: 'main index',
-                    handler: function (request, reply) {
+                    handler: function (request, h) {
 
-                        return reply('index!');
+                        return 'index!';
                     }
                 }
             });
@@ -160,11 +110,11 @@ internals.prepareServer = function (options, callback) {
             plugin.route({
                 method: 'GET',
                 path: '/hi',
-                config: {
+                options: {
                     auth: options.authType ? 'findme' : null,
-                    handler: function (request, reply) {
+                    handler: function (request, h) {
 
-                        return reply('Hello!');
+                        return 'Hello!';
                     }
                 }
             });
@@ -172,143 +122,132 @@ internals.prepareServer = function (options, callback) {
             plugin.route({
                 method: 'POST',
                 path: '/apost/{foo}/comment/{another}',
-                handler: function (request, reply) {
+                 options: {
+                    auth: options.authType ? 'findme' : null,
+                    handler: function (request, h) {
 
-                    return reply('');
+                        return '';
+                    }
                 }
             });
 
             plugin.route({
                 method: 'DELETE',
                 path: '/post/{id}',
-                handler: function (request, reply) {
+                options: {
+                    auth: options.authType ? 'findme' : null,
+                    handler: function (request, h) {
 
-                    return reply('');
+                        return '';
+                    }
                 }
             });
-
-
-            return next();
         }
     };
 
-    main.register.attributes = {
-        name: 'main',
-        version: '0.1.1'
-    };
+    main.name = 'main';
+    main.version = '0.1.1';
 
     server.route({
         method: 'GET',
         path: '/all',
-        config: {
+        options: {
             description: 'a route on all connections',
-            handler: function (request, reply) {
+            auth: options.authType ? 'findme' : null,
+            handler: function (request, h) {
 
-                return reply('index!');
+                return 'index!';
             }
         }
     });
+    
+    try {
+        await server.register([
+            { plugin: Blipp, options: options.blippOptions },
+            { plugin: main,  options: {}},
+            { plugin: api,   options: {}}
+        ]);
 
-    server.register([{ register: Blipp, options: options.blippOptions }], function (err) {
+        await server.start();
 
-        server.register([main], { select: 'first' }, function (err) {
+        expect(server).to.exist();
 
-            server.register([api], { select: 'second' }, function (err) {
-
-                expect(err).to.not.exist();
-                return callback(server);
-            });
-        });
-    });
-
-    server.start();
-};
-
-
-internals.fixUri = function (server, connections) {
-
-    for (var i = 0, il = connections.length; i < il; ++i) {
-        var connection = connections[i];
-        connection.uri = server.info.uri;
+        return server;
+    } catch(err) {
+        expect(err).to.not.exist();
     }
 };
 
-
 describe('routes', function () {
 
-    it('print route information', function (done) {
-
+    it('print route information', async () => {
+        
         var saved = console.log;
         var out = '';
-        console.log = function (str) {
+        console.log = (str) => out += str;
 
-            out += str;
+        const server = await internals.prepareServer(false);
+        
+        console.log = saved;
+        expect(out).to.not.match(/none.*main index/);
+        expect(out).to.match(/DELETE.*post/);
+        
+    });
+
+    it('gets route information', async () => {
+        let blippOptions = {
+            showAuth: false,
+            showStart: false
         };
-
-        internals.prepareServer(false, function (server) {
-
-            setTimeout(function () {
-
-                console.log = saved;
-                expect(out).to.not.match(/none.*main index/);
-                expect(out).to.match(/DELETE.*post/);
-                done();
-            }, 20);
-        });
+        
+        const server = await internals.prepareServer({blippOptions});
+        
+        var info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.result);
+        var text = server.plugins[Pkg.name].text();
+        expect(text).to.not.match(/none.*main index/);
     });
 
-
-    it('gets route information', function (done) {
-
-        internals.prepareServer({ blippOptions: { showAuth: false, showStart: false } }, function (server) {
-
-            var info = server.plugins[Pkg.name].info();
-            internals.fixUri(server, internals.result);
-            expect(info).to.deep.equal(internals.result);
-            var text = server.plugins[Pkg.name].text();
-            expect(text).to.not.match(/none.*main index/);
-            done();
-        });
-    });
-
-    it('gets route information with auth', function (done) {
-
-        internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'findme' }, function (server) {
-
-            var info = server.plugins[Pkg.name].info();
-            internals.fixUri(server, internals.authResult);
-            expect(info).to.deep.equal(internals.authResult);
-            var text = server.plugins[Pkg.name].text();
-            expect(text).to.match(/none.*main index/);
-            expect(text).to.match(/none.*api routes/);
-            expect(text).to.match(/hi.*findme/);
-            done();
-        });
-    });
-
-    it('gets route information with default', function (done) {
-
-        internals.prepareServer({ blippOptions: { showAuth: true, showStart: false }, authType: 'default' }, function (server) {
-
-            var info = server.plugins[Pkg.name].info();
-            internals.fixUri(server, internals.defaultAuthResult);
-            expect(info).to.deep.equal(internals.defaultAuthResult);
-            var text = server.plugins[Pkg.name].text();
-            expect(text).to.match(/none.*main index/);
-            expect(text).to.match(/findme.*api routes/);
-            done();
-        });
-    });
-
-    it('fails with invalid options', function (done) {
-
-        var invalidOptions = function () {
-
-            internals.prepareServer({ blippOptions: { derp: true } }, function (server) {
-
-            });
+    it('gets route information with auth', async () => {
+        let blippOptions = {
+            showAuth: true,
+            showStart: false
         };
-        expect(invalidOptions).to.throw();
-        done();
+        
+        const server = await internals.prepareServer({ blippOptions, authType: 'findme' });
+        
+        var info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.authResult);
+
+        var text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/findme.*api routes/);
+        expect(text).to.match(/hi.*findme/);
+    });
+
+    it('gets route information with default', async () => {
+        let blippOptions = {
+            showAuth: true,
+            showStart: false
+        };
+        
+        const server = await internals.prepareServer({ blippOptions, authType: 'default' });
+
+        var info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.defaultAuthResult);
+        var text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/findme.*api routes/);
+    });
+
+    it('fails with invalid options', async () => {
+        try {
+            await internals.prepareServer({ blippOptions: { derp: true } })
+        } catch(err) {
+            expect(err).to.exist();
+        };
     });
 });
