@@ -28,11 +28,11 @@ const internals = {
     authResult: [{
         routes: [
             { method: 'GET', path: '/', description: 'main index', auth: false },
-            { method: 'GET', path: '/all', description: 'a route on all connections', auth: 'findme' },
-            { method: 'GET', path: '/api', description: 'api routes', auth: 'findme' },
-            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: 'findme' },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false },
             { method: 'GET', path: '/hi', description: '', auth: 'findme' },
-            { method: 'DELETE', path: '/post/{id}', description: '', auth: 'findme' }
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false }
         ]
     }],
     defaultAuthResult: [{
@@ -77,7 +77,6 @@ internals.prepareServer = async function (options) {
                 path: '/api',
                 options: {
                     description: 'api routes',
-                    auth: options.authType ? 'findme' : null,
                     handler: function (request, h) {
 
                         return 'index!';
@@ -121,24 +120,18 @@ internals.prepareServer = async function (options) {
             plugin.route({
                 method: 'POST',
                 path: '/apost/{foo}/comment/{another}',
-                options: {
-                    auth: options.authType ? 'findme' : null,
-                    handler: function (request, h) {
+                handler: function (request, h) {
 
-                        return '';
-                    }
+                    return '';
                 }
             });
 
             plugin.route({
                 method: 'DELETE',
                 path: '/post/{id}',
-                options: {
-                    auth: options.authType ? 'findme' : null,
-                    handler: function (request, h) {
+                handler: function (request, h) {
 
-                        return '';
-                    }
+                    return '';
                 }
             });
         }
@@ -152,7 +145,6 @@ internals.prepareServer = async function (options) {
         path: '/all',
         options: {
             description: 'a route on all connections',
-            auth: options.authType ? 'findme' : null,
             handler: function (request, h) {
 
                 return 'index!';
@@ -193,6 +185,7 @@ describe('routes', () => {
 
         console.log = saved;
         expect(out).to.not.match(/none.*main index/);
+        expect(out).to.not.match(/none.*api index/);
         expect(out).to.match(/DELETE.*post/);
 
     });
@@ -228,7 +221,7 @@ describe('routes', () => {
 
         const text = server.plugins[Pkg.name].text();
         expect(text).to.match(/none.*main index/);
-        expect(text).to.match(/findme.*api routes/);
+        expect(text).to.match(/none.*api routes/);
         expect(text).to.match(/hi.*findme/);
     });
 
