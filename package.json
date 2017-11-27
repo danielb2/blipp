@@ -25,7 +25,7 @@
   "devDependencies": {
     "code": "^5.1.2",
     "hapi": "^17.0.1",
-    "hapi-auth-basic": "4.2.x",
+    "hapi-auth-basic": "^5.0.0",
     "lab": "^15.1.2"
   }
 }
