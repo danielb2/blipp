@@ -7,32 +7,34 @@ correctly. This can be difficult to see otherwise.
 
 ![image](images/screenshot.png)
 
-## Usage
+## Usage (Hapi v17)
 
 ``` javascript
-var Blipp = require('blipp');
-var Hapi = require('hapi');
+'use strict';
 
-var server = new Hapi.Server();
-server.connection();
+const Hapi = require('hapi');
+const Blipp = require('blipp');
 
-server.route({
+const server = new Hapi.Server();
+
+const init = async () => {
+  
+  await server.register(Blipp);
+
+  server.route({
     method: 'GET',
     path: '/somepath',
-    config: {
-        auth: 'simple',
-        description: 'Description to display',
-        handler: function (request, reply) {
-        // ..
-        }
+    options: {
+      auth: false,
+      description: 'Description to display',
+      handler: (request, h) => 'Something'
     }
-});
+  });
+  
+  await server.start();
+}
 
-server.register({ register: Blipp, options: {} }, function (err) {
-    server.start(function () {
-        // ..
-    });
-});
+init();
 ```
 
 ## Options
@@ -59,3 +61,4 @@ With showAuth:
 
 * 1.x = hapi 7.x
 * 2.x = hapi 8.x
+* 3.x = hapi 17.x
