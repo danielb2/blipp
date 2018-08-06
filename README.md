@@ -20,6 +20,8 @@ const server = new Hapi.Server();
 const init = async () => {
   
   await server.register(Blipp);
+  // await server.register({plugin: require('blipp'), options: { showAuth: true }});
+
 
   server.route({
     method: 'GET',
