@@ -19,12 +19,12 @@
   "license": "BSD",
   "dependencies": {
     "chalk": "^2.3.0",
-    "hoek": "^5.0.2",
-    "joi": "^13.0.1"
+    "hoek": "^5.0.4",
+    "joi": "^13.7.0"
   },
   "devDependencies": {
     "code": "^5.1.2",
-    "hapi": "^17.0.1",
+    "hapi": "^17.6.0",
     "hapi-auth-basic": "^5.0.0",
     "lab": "^15.1.2"
   }
