@@ -13,7 +13,7 @@ const { expect, it, describe } = exports.lab = require('lab').script();
 const internals = {
     validateFunc: function (request, username, password, h) {
 
-        return { isValid: true, credentials: null };
+        return { isValid: true, credentials: { scope: ['tester'] } };
     },
     result: [{
         routes: [
@@ -33,6 +33,16 @@ const internals = {
             { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false },
             { method: 'GET', path: '/hi', description: '', auth: 'findme' },
             { method: 'DELETE', path: '/post/{id}', description: '', auth: false }
+        ]
+    }],
+    scopeResult: [{
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false, scope: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: 'tester' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
         ]
     }],
     defaultAuthResult: [{
@@ -105,11 +115,16 @@ internals.prepareServer = async function (options) {
                 }
             });
 
+            const authOptions = options.authType ? {
+                strategy: 'findme',
+                scope: ['tester']
+            } : false;
+
             plugin.route({
                 method: 'GET',
                 path: '/hi',
                 options: {
-                    auth: options.authType ? 'findme' : null,
+                    auth: authOptions,
                     handler: function (request, h) {
 
                         return 'Hello!';
@@ -225,6 +240,26 @@ describe('routes', () => {
         expect(text).to.match(/hi.*findme/);
     });
 
+    it('gets route information with scope', async () => {
+
+        const blippOptions = {
+            showAuth: true,
+            showScope: true,
+            showStart: false
+        };
+
+        const server = await internals.prepareServer({ blippOptions, authType: 'findme' });
+
+        const info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.scopeResult);
+
+        const text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/none.*api routes/);
+        expect(text).to.match(/hi.*findme/);
+    });
+
     it('gets route information with default', async () => {
 
         const blippOptions = {
@@ -249,6 +284,6 @@ describe('routes', () => {
         }
         catch (err) {
             expect(err).to.exist();
-        };
+        }
     });
 });
