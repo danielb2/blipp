@@ -43,7 +43,8 @@ init();
 
 The following options are available:
 
-* `showAuth`: Shows any hapi authentication scheme using server.auth.strategy. Default: false
+* `showAuth`: Shows any hapi authentication scheme using _server.auth.strategy_. Default: false
+* `showScope`: Shows route access rules using _route.options.auth.access.scope_. Default: false
 * `showStart`: Shows route information during startup of server. Default: true
 
 
