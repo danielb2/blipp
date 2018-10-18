@@ -1,13 +1,18 @@
 'use strict';
 
 // Load modules
+const Code = require('code');
 const Hapi = require('hapi');
+const Lab = require('lab');
 
 const Blipp = require('../lib/');
 const Pkg = require('../package.json');
 
 // Test shortcuts
-const { expect, it, describe } = exports.lab = require('lab').script();
+
+const lab = exports.lab = Lab.script();
+const { describe, it } = lab;
+const expect = Code.expect;
 
 // only one connection; results are in alphabetical order
 const internals = {
