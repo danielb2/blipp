@@ -6,11 +6,11 @@ const Blipp = require('../');
 
 const internals = {};
 
-const server = new Hapi.Server();
-
 const init = async () => {
 
-    await server.register({plugin: Blipp, options: { showAuth: true }});
+    const server = new Hapi.Server();
+
+    await server.register({ plugin: Blipp, options: { showAuth: true } });
 
     server.auth.scheme('custom', internals.scheme);
     server.auth.strategy('stimpy', 'custom');
@@ -47,16 +47,19 @@ const init = async () => {
 
     server.route({
         method: 'GET',
-        path: '/route.table',
+        path: '/routes.table',
         config: {
             auth: false,
             description: 'List all users',
-            handler: (request, h) => 'Something'
+            handler: (request, h) => {
+
+                return request.server.plugins.blipp.info();
+            }
         }
     });
 
     await server.start();
-}
+};
 
 init();
 
