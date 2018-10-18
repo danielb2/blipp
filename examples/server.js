@@ -50,7 +50,7 @@ const init = async () => {
         path: '/routes.table',
         config: {
             auth: false,
-            description: 'List all users',
+            description: 'List routes table',
             handler: (request, h) => {
 
                 return request.server.plugins.blipp.info();
