@@ -9,35 +9,9 @@ correctly. This can be difficult to see otherwise.
 
 ## Usage (Hapi v17)
 
-``` javascript
-'use strict';
+Register like any other plugin
 
-const Hapi = require('hapi');
-const Blipp = require('blipp');
-
-const server = new Hapi.Server();
-
-const init = async () => {
-  
-  await server.register(Blipp);
-  // await server.register({plugin: require('blipp'), options: { showAuth: true }});
-
-
-  server.route({
-    method: 'GET',
-    path: '/somepath',
-    options: {
-      auth: false,
-      description: 'Description to display',
-      handler: (request, h) => 'Something'
-    }
-  });
-  
-  await server.start();
-}
-
-init();
-```
+See [examples](examples/) for examples
 
 ## Options
 
