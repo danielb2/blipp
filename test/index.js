@@ -46,7 +46,7 @@ const internals = {
             { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
             { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
             { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
-            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: 'tester' },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: 'required: tester1 forbidden: tester3 selection: tester2' },
             { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
         ]
     }],
@@ -122,7 +122,7 @@ internals.prepareServer = async function (options) {
 
             const authOptions = options.authType ? {
                 strategy: 'findme',
-                scope: ['tester']
+                scope: ['+tester1', 'tester2', '!tester3']
             } : false;
 
             plugin.route({
