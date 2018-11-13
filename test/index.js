@@ -282,10 +282,10 @@ describe('routes', () => {
         expect(text).to.match(/findme.*api routes/);
     });
 
-    it('excluded routes should be shown', async () => {
+    it('exclude routes should be shown', async () => {
 
         const blippOptions = {
-            excluded: [
+            exclude: [
                 '/api',
                 '/hi'
             ]
