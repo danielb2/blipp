@@ -46,7 +46,37 @@ const internals = {
             { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
             { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
             { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
-            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: 'required: tester1 forbidden: tester3 selection: tester2' },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: '+tester1, !tester3, tester2' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
+        ]
+    }],
+    requiredScopeResult: [{
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false, scope: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: '+tester1' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
+        ]
+    }],
+    forbiddenScopeResult: [{
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false, scope: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: '!tester3' },
+            { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
+        ]
+    }],
+    selectionScopeResult: [{
+        routes: [
+            { method: 'GET', path: '/', description: 'main index', auth: false, scope: false },
+            { method: 'GET', path: '/all', description: 'a route on all connections', auth: false, scope: false },
+            { method: 'GET', path: '/api', description: 'api routes', auth: false, scope: false },
+            { method: 'POST', path: '/apost/{foo}/comment/{another}', description: '', auth: false, scope: false },
+            { method: 'GET', path: '/hi', description: '', auth: 'findme', scope: 'tester2' },
             { method: 'DELETE', path: '/post/{id}', description: '', auth: false, scope: false }
         ]
     }],
@@ -120,10 +150,26 @@ internals.prepareServer = async function (options) {
                 }
             });
 
-            const authOptions = options.authType ? {
-                strategy: 'findme',
-                scope: ['+tester1', 'tester2', '!tester3']
-            } : false;
+            let authOptions = false;
+            if (options.authType) {
+                authOptions = {
+                    strategy: 'findme'
+                };
+                switch (options.scopeType) {
+                    case 'required':
+                        authOptions.scope = ['+tester1'];
+                        break;
+                    case 'selection':
+                        authOptions.scope = ['tester2'];
+                        break;
+                    case 'forbidden':
+                        authOptions.scope = ['!tester3'];
+                        break;
+                    default:
+                        authOptions.scope = ['+tester1', 'tester2', '!tester3'];
+                        break;
+                }
+            }
 
             plugin.route({
                 method: 'GET',
@@ -245,7 +291,7 @@ describe('routes', () => {
         expect(text).to.match(/hi.*findme/);
     });
 
-    it('gets route information with scope', async () => {
+    it('gets route information with all scope', async () => {
 
         const blippOptions = {
             showAuth: true,
@@ -264,6 +310,67 @@ describe('routes', () => {
         expect(text).to.match(/none.*api routes/);
         expect(text).to.match(/hi.*findme/);
     });
+
+    it('gets route information with required scope', async () => {
+
+        const blippOptions = {
+            showAuth: true,
+            showScope: true,
+            showStart: false
+        };
+
+        const server = await internals.prepareServer({ blippOptions, authType: 'findme', scopeType: 'required' });
+
+        const info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.requiredScopeResult);
+
+        const text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/none.*api routes/);
+        expect(text).to.match(/hi.*findme/);
+    });
+
+    it('gets route information with selection scope', async () => {
+
+        const blippOptions = {
+            showAuth: true,
+            showScope: true,
+            showStart: false
+        };
+
+        const server = await internals.prepareServer({ blippOptions, authType: 'findme', scopeType: 'selection' });
+
+        const info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.selectionScopeResult);
+
+        const text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/none.*api routes/);
+        expect(text).to.match(/hi.*findme/);
+    });
+
+    it('gets route information with forbidden scope', async () => {
+
+        const blippOptions = {
+            showAuth: true,
+            showScope: true,
+            showStart: false
+        };
+
+        const server = await internals.prepareServer({ blippOptions, authType: 'findme', scopeType: 'forbidden' });
+
+        const info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        expect(info).to.equal(internals.forbiddenScopeResult);
+
+        const text = server.plugins[Pkg.name].text();
+        expect(text).to.match(/none.*main index/);
+        expect(text).to.match(/none.*api routes/);
+        expect(text).to.match(/hi.*findme/);
+    });
+
 
     it('gets route information with default', async () => {
 
