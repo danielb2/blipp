@@ -4,7 +4,7 @@
   "description": "blipp is a simple hapi plugin to display the routes table at startup",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab -a code -v -t 100 -L"
+    "test": "lab -a code -v -t 100 -L -I queueMicrotask"
   },
   "repository": {
     "type": "git",
