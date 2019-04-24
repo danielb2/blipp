@@ -39,3 +39,4 @@ With showAuth:
 * 1.x = hapi 7.x
 * 2.x = hapi 8.x
 * 3.x = hapi 17.x
+* 4.x = hapi 18.x
