@@ -1,9 +1,9 @@
 'use strict';
 
 // Load modules
-const Code = require('code');
-const Hapi = require('hapi');
-const Lab = require('lab');
+const Code = require('@hapi/code');
+const Hapi = require('@hapi/hapi');
+const Lab = require('@hapi/lab');
 
 const Blipp = require('../lib/');
 const Pkg = require('../package.json');
@@ -98,7 +98,7 @@ internals.prepareServer = async function (options) {
     const server = new Hapi.Server();
 
     try {
-        await server.register(require('hapi-auth-basic'));
+        await server.register(require('@hapi/basic'));
 
         if (options.authType === 'findme') {
             server.auth.strategy('findme', 'basic', { validate: internals.validateFunc });
@@ -111,7 +111,7 @@ internals.prepareServer = async function (options) {
 
     }
     catch (err) {
-        console.log('Error: Couldn\'t register hapi-auth-basic', err);
+        console.log('Error: Couldn\'t register @hapi/basic', err);
     }
 
     const api = {
