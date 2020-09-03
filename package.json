@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@hapi/code": "5.x.x",
-    "@hapi/hapi": "18.x.x",
+    "@hapi/hapi": "19.x.x",
     "@hapi/basic": "5.x.x",
     "@hapi/lab": "18.x.x"
   }
