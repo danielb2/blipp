@@ -21,7 +21,7 @@
     "chalk": "2.x.x",
     "easy-table": "1.x.x",
     "@hapi/hoek": "8.x.x",
-    "@hapi/joi": "15.x.x"
+    "joi": "17.x.x"
   },
   "devDependencies": {
     "@hapi/code": "5.x.x",
