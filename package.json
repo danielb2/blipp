@@ -18,15 +18,15 @@
   "author": "Daniel Bretoi",
   "license": "BSD",
   "dependencies": {
-    "chalk": "2.x.x",
+    "chalk": "4.x.x",
     "easy-table": "1.x.x",
-    "@hapi/hoek": "8.x.x",
+    "@hapi/hoek": "9.x.x",
     "joi": "17.x.x"
   },
   "devDependencies": {
-    "@hapi/code": "5.x.x",
-    "@hapi/hapi": "18.x.x",
-    "@hapi/basic": "5.x.x",
-    "@hapi/lab": "18.x.x"
+    "@hapi/code": "8.x.x",
+    "@hapi/hapi": "20.x.x",
+    "@hapi/basic": "6.x.x",
+    "@hapi/lab": "24.x.x"
   }
 }
