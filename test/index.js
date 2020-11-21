@@ -389,6 +389,24 @@ describe('routes', () => {
         expect(text).to.match(/findme.*api routes/);
     });
 
+    it('exclude routes should be shown', async () => {
+
+        const blippOptions = {
+            exclude: [
+                '/api',
+                '/hi'
+            ]
+        };
+
+        const server = await internals.prepareServer({ blippOptions });
+
+        const info = server.plugins[Pkg.name].info();
+        delete info[0].uri;
+        const text = server.plugins[Pkg.name].text();
+        expect(text).to.not.match(/\/api/);
+        expect(text).to.not.match(/\/hi/);
+    });
+
     it('fails with invalid options', async () => {
 
         try {

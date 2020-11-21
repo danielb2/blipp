@@ -17,9 +17,12 @@ See [examples](examples/) for examples
 
 The following options are available:
 
-* `showAuth`: Shows any hapi authentication scheme using _server.auth.strategy_. Default: false
-* `showScope`: Shows route access rules using _route.options.auth.access.scope_. Default: false
-* `showStart`: Shows route information during startup of server. Default: true
+Option | Type | Description | Defaut
+-|:-:|:-:|-
+`showAuth` | boolean | Shows any hapi authentication scheme using _server.auth.strategy_ | `false`
+`showScope` | boolean | Shows route access rules using _route.options.auth.access.scope_ | `false`
+`showStart` | boolean | Shows route information during startup of server | `true`
+`exclude` | array | Doesn't show specified routes. Routes should be a `string` type. Example, [`'/doc'`, `'/swagger'`] | `[ ]`
 
 
 The module also registers the _'info()'_  and _'text()'_ API methods:
